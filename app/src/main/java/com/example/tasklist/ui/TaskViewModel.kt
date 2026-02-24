@@ -24,11 +24,11 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage.asSharedFlow()
 
-    fun addTask(title: String, description: String = "") {
+    fun addTask(title: String, description: String = "", priority: com.example.tasklist.data.Priority = com.example.tasklist.data.Priority.MEDIUM) {
         if (title.isBlank()) return
         viewModelScope.launch {
             try {
-                repository.insert(Task(title = title, description = description))
+                repository.insert(Task(title = title, description = description, priority = priority))
             } catch (e: Exception) {
                 _errorMessage.emit("Failed to add task: ${e.message}")
             }
@@ -55,11 +55,11 @@ class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
         }
     }
 
-    fun updateTask(task: Task, newTitle: String, newDescription: String) {
+    fun updateTask(task: Task, newTitle: String, newDescription: String, newPriority: com.example.tasklist.data.Priority = task.priority) {
         if (newTitle.isBlank()) return
         viewModelScope.launch {
             try {
-                repository.update(task.copy(title = newTitle, description = newDescription))
+                repository.update(task.copy(title = newTitle, description = newDescription, priority = newPriority))
             } catch (e: Exception) {
                 _errorMessage.emit("Failed to update task: ${e.message}")
             }

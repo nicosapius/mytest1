@@ -2,18 +2,46 @@
 .gradle/
 build/
 app/build/
+captures/
 
 # IntelliJ / Android Studio
 .idea/
 *.iml
+*.iws
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/deploymentTargetDropDown.xml
 local.properties
 
 # Android artifacts
 *.apk
+*.ap_
+*.dex
 *.aar
+*.flat
+
+# Generated Files
+/gen/
+/out/
+/bin/
 
 # OS files
 .DS_Store
+Thumbs.db
 
 # Logs
 *.log
+
+# NDK
+.externalNativeBuild/
+.cxx/
+
+# Backup files
+*.bak
+*.swp
+*~

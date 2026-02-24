@@ -4,8 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
-@Database(entities = [Task::class], version = 1, exportSchema = false)
+class PriorityConverter {
+    @TypeConverter
+    fun fromPriority(priority: Priority): String = priority.name
+
+    @TypeConverter
+    fun toPriority(value: String): Priority = Priority.valueOf(value)
+}
+
+@Database(entities = [Task::class], version = 2, exportSchema = false)
+@TypeConverters(PriorityConverter::class)
 abstract class TaskDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
 

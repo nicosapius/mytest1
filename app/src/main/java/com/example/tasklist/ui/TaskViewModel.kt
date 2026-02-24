@@ -5,21 +5,42 @@ import androidx.lifecycle.viewModelScope
 import com.example.tasklist.data.Task
 import com.example.tasklist.data.TaskRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TaskViewModel(private val repository: TaskRepository) : ViewModel() {
 
-    val tasks: StateFlow<List<Task>> = repository.allTasks
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    val tasks: StateFlow<List<Task>> = combine(
+        repository.allTasks,
+        _searchQuery
+    ) { allTasks, query ->
+        if (query.isBlank()) {
+            allTasks
+        } else {
+            allTasks.filter { task ->
+                task.title.contains(query, ignoreCase = true) ||
+                    task.description.contains(query, ignoreCase = true)
+            }
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = emptyList()
+    )
+
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage.asSharedFlow()

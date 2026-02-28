@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM tasks ORDER BY id DESC")
+    @Query("SELECT * FROM tasks ORDER BY isCompleted ASC, id DESC")
     fun getAllTasks(): Flow<List<Task>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
